@@ -1,12 +1,14 @@
 #pragma once
 
 #include <unordered_map>
+#include <algorithm>
 
 namespace graph {
     template<typename Key, typename Value, typename Weight>
     class Graph {
     private:
         class Node;
+
     public:
         using key_type = Key;
         using value_type = Value;
@@ -22,11 +24,22 @@ namespace graph {
         iterator begin() noexcept { return m_vertices.begin(); }
         iterator end() noexcept { return m_vertices.end(); }
 
-
         bool empty() const noexcept { m_vertices.empty(); }
         std::size_t size() const noexcept { m_vertices.size(); }
         void clear() const noexcept { m_vertices.clear(); }
-        void swap(const Graph<key_type, value_type, weight_type>& graph) { m_vertices.swap(graph.m_vertices); }
+        void swap(const Graph<key_type, value_type, weight_type>& graph) noexcept { m_vertices.swap(graph.m_vertices); }
+
+        Node& operator[](const key_type& key) { return m_vertices[key]; }
+        Node& at(const key_type& key) { return m_vertices.at(); }
+
+        std::size_t degree_out(const key_type& key) { return m_vertices[key].size(); }
+        std::size_t degree_in(const key_type& key) {
+            return std::count_if(begin(), end(), [&key](const auto& it) {
+                auto edges = (*it).second.m_edges;
+                return edges.find(key) != edges.end();
+            });
+        }
+
     private:
         std::unordered_map<key_type, Node> m_vertices;
     };
@@ -56,5 +69,7 @@ namespace graph {
     };
 
     template<typename Key, typename Value, typename Weight>
-    void swap(const Graph<Key, Value, Weight>& graph1, const Graph<Key, Value, Weight>& graph2) { graph1.swap(graph2); }
+    inline void swap(const Graph<Key, Value, Weight>& graph1, const Graph<Key, Value, Weight>& graph2) noexcept {
+        graph1.swap(graph2);
+    }
 }
