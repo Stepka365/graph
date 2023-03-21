@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <algorithm>
+#include <stdexcept>
 
 namespace graph {
     template<typename Key, typename Value, typename Weight>
@@ -32,13 +32,10 @@ namespace graph {
         Node& operator[](const key_type& key) { return m_vertices[key]; }
         Node& at(const key_type& key) { return m_vertices.at(); }
 
-        std::size_t degree_out(const key_type& key) { return m_vertices[key].size(); }
-        std::size_t degree_in(const key_type& key) {
-            return std::count_if(begin(), end(), [&key](const auto& it) {
-                auto edges = (*it).second.m_edges;
-                return edges.find(key) != edges.end();
-            });
-        }
+        std::size_t degree_out(const key_type& key) const{ return m_vertices[key].size(); }
+        std::size_t degree_in(const key_type& key) const;
+
+        bool loop(const key_type& key) const;
 
     private:
         std::unordered_map<key_type, Node> m_vertices;
@@ -72,4 +69,8 @@ namespace graph {
     inline void swap(const Graph<Key, Value, Weight>& graph1, const Graph<Key, Value, Weight>& graph2) noexcept {
         graph1.swap(graph2);
     }
+
+    class GraphException : public std::runtime_error {
+        GraphException(std::string& msg) : std::runtime_error(msg) {}
+    };
 }
