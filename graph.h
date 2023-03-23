@@ -27,30 +27,32 @@ namespace graph {
 
         bool empty() const noexcept { m_vertices.empty(); }
         std::size_t size() const noexcept { m_vertices.size(); }
-        void clear() const noexcept { m_vertices.clear(); }
+        void clear() noexcept { m_vertices.clear(); }
 
-        void swap(const Graph<key_type, value_type, weight_type>& graph) noexcept {
+        void swap(Graph<key_type, value_type, weight_type>& graph) noexcept {
             m_vertices.swap(graph.m_vertices);
         }
 
         Node& operator[](const key_type& key) { return m_vertices[key]; }
         Node& at(const key_type& key);
 
-        std::size_t degree_out(const key_type& key) const { return m_vertices[key].size(); }
+        std::size_t degree_out(const key_type& key) const;
         std::size_t degree_in(const key_type& key) const;
         bool loop(const key_type& key) const;
 
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value) {
-            return m_vertices.insert({key, value});
+            return m_vertices.insert({key, {value}});
         }
 
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value) {
             return m_vertices.insert_or_assign(key, value);
         }
 
-        //std::pair<typename Node::iterator, bool>
-        //insert_edge(const std::pair<key_type, key_type>& key_pair, weight_type& weight);
+        std::pair<typename Node::iterator, bool>
+        insert_edge(const std::pair<key_type, key_type>& key_pair, const weight_type& weight);
 
+        std::pair<typename Node::iterator, bool>
+        insert_or_assign_edge(const std::pair<key_type, key_type>& key_pair, const weight_type& weight);
     private:
         vertices_type m_vertices;
     };
@@ -68,6 +70,9 @@ namespace graph {
         const_iterator end() const noexcept { return m_edges.end(); }
         iterator begin() noexcept { return m_edges.begin(); }
         iterator end() noexcept { return m_edges.end(); }
+
+        Node() = default;
+        Node(const value_type& value) : m_value(value), m_edges() {}
 
         bool empty() noexcept { return m_edges.empty(); }
         void clear() noexcept { m_edges.clear(); }
@@ -94,3 +99,5 @@ namespace graph {
         GraphException(const char* msg) : std::runtime_error(msg) {}
     };
 }
+
+#include "graph.hpp"
