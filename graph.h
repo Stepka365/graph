@@ -14,8 +14,9 @@ namespace graph {
         using value_type = Value;
         using weight_type = Weight;
 
-        using const_iterator = typename std::unordered_map<key_type, Node>::const_iterator;
-        using iterator = typename std::unordered_map<key_type, Node>::iterator;
+        using vertices_type = typename std::unordered_map<key_type, Node>;
+        using const_iterator = typename vertices_type::const_iterator;
+        using iterator = typename vertices_type::iterator;
 
         const_iterator cbegin() const noexcept { return m_vertices.cbegin(); }
         const_iterator cend() const noexcept { return m_vertices.cend(); }
@@ -47,16 +48,19 @@ namespace graph {
             return m_vertices.insert_or_assign(key, value);
         }
 
+        //std::pair<typename Node::iterator, bool>
+        //insert_edge(const std::pair<key_type, key_type>& key_pair, weight_type& weight);
 
     private:
-        std::unordered_map<key_type, Node> m_vertices;
+        vertices_type m_vertices;
     };
 
     template<typename key_type, typename value_type, typename weight_type>
     class Graph<key_type, value_type, weight_type>::Node {
     public:
-        using const_iterator = typename std::unordered_map<key_type, weight_type>::const_iterator;
-        using iterator = typename std::unordered_map<key_type, weight_type>::iterator;
+        using edges_type = typename std::unordered_map<key_type, weight_type>;
+        using const_iterator = typename edges_type::const_iterator;
+        using iterator = typename edges_type::iterator;
 
         const_iterator cbegin() const noexcept { return m_edges.cbegin(); }
         const_iterator cend() const noexcept { return m_edges.cend(); }
@@ -71,9 +75,12 @@ namespace graph {
 
         const value_type& value() const noexcept { return m_value; }
         value_type& value() noexcept { return m_value; }
+
+        const edges_type& get_edges() const noexcept { return m_edges; }
+        edges_type& get_edges() noexcept { return m_edges; }
     private:
         value_type m_value;
-        std::unordered_map<key_type, weight_type> m_edges;
+        edges_type m_edges;
     };
 
     template<typename Key, typename Value, typename Weight>
@@ -83,6 +90,7 @@ namespace graph {
     }
 
     class GraphException : public std::runtime_error {
-        GraphException(std::string& msg) : std::runtime_error(msg) {}
+    public:
+        GraphException(const char* msg) : std::runtime_error(msg) {}
     };
 }
