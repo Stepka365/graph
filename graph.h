@@ -26,7 +26,7 @@ namespace graph {
         iterator end() noexcept { return m_vertices.end(); }
 
         bool empty() const noexcept { m_vertices.empty(); }
-        std::size_t size() const noexcept { m_vertices.size(); }
+        size_t size() const noexcept { m_vertices.size(); }
         void clear() noexcept { m_vertices.clear(); }
 
         void swap(Graph<key_type, value_type, weight_type>& graph) noexcept {
@@ -36,8 +36,10 @@ namespace graph {
         Node& operator[](const key_type& key) { return m_vertices[key]; }
         Node& at(const key_type& key);
 
-        std::size_t degree_out(const key_type& key) const;
-        std::size_t degree_in(const key_type& key) const;
+        const_iterator fine(const key_type& key) { return m_vertices.find(key); }
+        iterator find(const key_type& key) { return m_vertices.find(key); }
+        size_t degree_out(const key_type& key) const;
+        size_t degree_in(const key_type& key) const;
         bool loop(const key_type& key) const;
 
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value) {
@@ -76,7 +78,7 @@ namespace graph {
 
         bool empty() noexcept { return m_edges.empty(); }
         void clear() noexcept { m_edges.clear(); }
-        std::size_t size() noexcept { return m_edges.size(); }
+        size_t size() noexcept { return m_edges.size(); }
 
         const value_type& value() const noexcept { return m_value; }
         value_type& value() noexcept { return m_value; }
