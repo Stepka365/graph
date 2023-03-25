@@ -36,7 +36,7 @@ namespace graph {
         Node& operator[](const key_type& key) { return m_vertices[key]; }
         Node& at(const key_type& key);
 
-        const_iterator fine(const key_type& key) { return m_vertices.find(key); }
+        const_iterator find(const key_type& key) const { return m_vertices.find(key); }
         iterator find(const key_type& key) { return m_vertices.find(key); }
         size_t degree_out(const key_type& key) const;
         size_t degree_in(const key_type& key) const;
